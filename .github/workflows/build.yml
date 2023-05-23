@@ -55,7 +55,7 @@ jobs:
      - name: Set up JavaScript
        id: setup-js
        run: 
-         echo "::set-output name=getDataForStoringInDatastore::$(node -e "console.log(JSON.stringify(require('./../build-config/deployUtil.js').getDataForStoringInDatastore()))")"
+         echo "::set-output name=getDataForStoringInDatastore::$(node -e "console.log(JSON.stringify(require('./../../build-config/deployUtil.js').getDataForStoringInDatastore()))")"
 
 
      - name: Store data in the DataStore
