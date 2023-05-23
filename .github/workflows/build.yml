@@ -43,4 +43,11 @@ jobs:
             echo "Brand: ${{ github.event.inputs.brand }}"
             echo "OS: ${{ github.event.inputs.OS }}"
               
-
+     - name: Cache node_modules  
+       uses: actions/cache@v2
+       with:
+        path: ~/.npm
+        key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.OS }}-node-
+          ${{ runner.OS }}-
