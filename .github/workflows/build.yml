@@ -51,3 +51,13 @@ jobs:
         restore-keys: |
           ${{ runner.OS }}-node-
           ${{ runner.OS }}-
+
+     - name: Set up JavaScript
+       id: setup-js
+       run: 
+         echo "::set-output name=getDataForStoringInDatastore::$(node -e "console.log(JSON.stringify(require('./../build-config/deployUtil.js').getDataForStoringInDatastore()))")"
+
+
+     - name: Store data in the DataStore
+       run: |
+        echo "Mode: ${{ steps.setup-js.outputs.getDataForStoringInDatastore }}"
