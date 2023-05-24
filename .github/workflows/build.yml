@@ -16,16 +16,33 @@ jobs:
 
      - name: Extract Labels
        id: extract-labels
+
+
+
+
        run: |
-          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
-          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
-          mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*mode:\([^,]*\).*/\1/p')
+          brand_label=""
+          version_label=""
+          mode_label=""
+
+          for label in ${{ github.event.pull_request.labels.*.name }}; do
+            if [[ $label == brand:* ]]; then
+              brand_label="${label#brand:}"
+            elif [[ $label == v:* ]]; then
+              version_label="${label#v:}"
+            elif [[ $label == mode:* ]]; then
+              mode_label="${label#mode:}"
+            fi
+          done
 
           echo "::set-output name=brand::${brand_label:-anywhere.app}"
           echo "::set-output name=version::${version_label:-1.0.0}"
           echo "::set-output name=mode::${mode_label:-dev-ts}"
 
-     - name: Store data
+
+      
+
+     - name: Store inputs
        run: | 
             echo "Brand: ${{ steps.extract-labels.outputs.brand }}"
             echo "Version: ${{ steps.extract-labels.outputs.version }}"
