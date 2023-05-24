@@ -16,37 +16,35 @@ jobs:
        run: |
         echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
 
-     - name: Extract and process labels
+      
+     - name: Check Labels
+       if: |
+                contains(join(' ', github.event.pull_request.labels.*.name), 'os:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'mode:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'brand:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'v:')
+       run: echo "All labels are selected."
+
+     - name: Extract Labels
        id: extract-labels
        run: |
-          for label in "${{ github.event.pull_request.labels.*.name }}"; do
-            if [[ $label =~ v:(.*) ]]; then
-              v_label="${BASH_REMATCH[1]}"
-              echo "v: $v_label"
-            elif [[ $label =~ brand:(.*) ]]; then
-              brand_label="${BASH_REMATCH[1]}"
-              echo "brand: $brand_label"   
-            elif [[ $label =~ mode:(.*) ]]; then
-              mode_label="${BASH_REMATCH[1]}"
-              echo "mode: $mode_label"    
-            elif [[ $label =~ os:(.*) ]]; then
-              os_label="${BASH_REMATCH[1]}"
-              echo "os: $os_label"          
-            fi
-          done
+          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
+          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
+          mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*mode:\([^,]*\).*/\1/p')
+
+          echo "::set-output name=brand::${brand_label:-anywhere.app}"
+          echo "::set-output name=version::${version_label:-1.0.0}"
+          echo "::set-output name=mode::${mode_label:-dev-ts}"
+          echo "::set-output name=os::${os:-macos-latest}"
 
 
-          echo "::set-output name=brand::${brand_label}"
-          echo "::set-output name=version::${v_label}"
-          echo "::set-output name=mode::${mode_label}"
-          echo "::set-output name=os::${os_label}"
-
-
-     - name: Print data
+     - name: Print all the params
        run: | 
             echo "Brand: ${{ steps.extract-labels.outputs.brand }}"
             echo "Version: ${{ steps.extract-labels.outputs.version }}"
             echo "Mode: ${{ steps.extract-labels.outputs.mode }}"
+            echo "Os: ${{ steps.extract-labels.outputs.os }}"
+
 
      - name: Setup checkout@v2
        uses: actions/checkout@v2
