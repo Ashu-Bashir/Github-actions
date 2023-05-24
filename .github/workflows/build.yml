@@ -22,7 +22,7 @@ jobs:
         echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
 
      - name: Extract Labels
-       id: extract-labels
+       id: extract-labels 
        run: |
           brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
           version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
