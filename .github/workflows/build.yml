@@ -9,11 +9,6 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    if: |
-                contains(join(' ', github.event.pull_request.labels.*.name), 'os:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'mode:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'brand:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'v:')
     runs-on: macos-latest
     
     steps: 
