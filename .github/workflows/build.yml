@@ -36,7 +36,7 @@ jobs:
           echo "::set-output name=os::${os:-macos-latest}"
 
 
-     - name: Print all the params
+     - name: Print all the params 
        run: |  
             echo "Brand: ${{ steps.extract-labels.outputs.brand }}"
             echo "Version: ${{ steps.extract-labels.outputs.version }}"
