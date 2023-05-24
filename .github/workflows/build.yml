@@ -25,7 +25,7 @@ jobs:
 
      - name: Extract Brand Label
        run: |
-           for label in ${{ github.event.pull_request.labels.*.name }}; do
+           for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
              if [[ $label == brand:* ]]; then
                brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
                echo "Brand Label: $brand_label"
