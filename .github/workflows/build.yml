@@ -40,5 +40,5 @@ jobs:
 
 
      - name: Store data
-       run: |
+       run: | 
         echo "Mode: ${{ steps.setup-js.outputs.getData }}"
