@@ -12,13 +12,8 @@ jobs:
     # if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
     # runs-on: ${{ (github.event.pull_request.labels.*.name ) }}  
 
-    # if: ${{ startsWith(github.event.pull_request.labels.*.name, 'os:') && startsWith(github.event.pull_request.labels.*.name, 'brand:')  && startsWith(github.event.pull_request.labels.*.name, 'v:') && startsWith(github.event.pull_request.labels.*.name, 'mode:')  }}
-    # runs-on: macos-latest  
-
-    if: ${{ contains(join(github.event.pull_request.labels.*.name, ' '), 'os:') }}
-    runs-on: ${{ (github.event.pull_request.labels.*.name) }}
-
     
+    runs-on: macos-latest  
     steps: 
      - name: echo all lables
        run: |
@@ -62,13 +57,24 @@ jobs:
                 break
               fi
              done
-
-
+     - name: Extract Os Label
+       id: extract-os
+       run: |
+             for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
+                if [[ $label == os:* ]]; then
+                    os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
+                    echo "os : $os_label"
+                    echo "::set-output name=os::${os_label}"
+                    break
+                fi
+             done
      - name: Print all the params 
        run: |  
             echo "Brand: ${{ steps.extract-brand.outputs.brand }}"
             echo "Version: ${{ steps.extract-version.outputs.version }}"
             echo "Mode: ${{ steps.extract-mode.outputs.mode }}"
+            echo "Os: ${{ steps.extract-mode.outputs.os }}"
+
 
 
      - name: Setup checkout@v2
