@@ -39,7 +39,7 @@ jobs:
                  echo "Mode : $mode_label"
                  break
               fi
-            done
+            done 
             echo "::set-output name=mode::${mode_label:-dev-ts}"
 
      - name: Extract Version Label
