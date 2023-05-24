@@ -15,7 +15,7 @@ jobs:
     steps: 
 
      - name: Check Brand Label
-       id: check_brand_label
+       id: check_brand_label 
        run: |
          if echo "${{ github.event.pull_request.labels.*.name }}" | grep -q "brand|v|mode"; then
          echo "::set-output name=brand_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/brand/ {print $2}')"
