@@ -11,6 +11,8 @@ jobs:
  init:
     # if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
     # runs-on: ${{ (github.event.pull_request.labels.*.name ) }}  
+
+    if: ${{ startsWith(github.event.pull_request.labels.*.name, 'os:') && startsWith(github.event.pull_request.labels.*.name, 'brand:')  && startsWith(github.event.pull_request.labels.*.name, 'v:') && startsWith(github.event.pull_request.labels.*.name, 'mode:')}}
     runs-on: macos-latest  
 
     
