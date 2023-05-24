@@ -24,34 +24,48 @@ jobs:
          done
 
      - name: Extract Brand Label
+       id: extract-brand
        run: |
            for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
              if [[ $label == brand:* ]]; then
                brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
-               echo "Brand Label: $brand_label"
+               echo "Brand : $brand_label"
+               echo "::set-output name=brand::${brand_label:-anywhere.app}"
                break
              fi
            done
 
-     - name: Extract Labels
-       id: extract-labels
+     - name: Extract Mode Label
+       id: extract-mode
        run: |
-          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
-          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
-          mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*mode:\([^,]*\).*/\1/p')
+            for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
+              if [[ $label == mode:* ]]; then
+                 mode_label=$(echo "$label" | sed -n 's/mode:\([^,]*\).*/\1/p')
+                 echo "Mode : $mode_label"
+                 echo "::set-output name=mode::${mode_label:-dev-ts}"
+                 break
+              fi
+            done
 
-          echo "::set-output name=brand::${brand_label:-anywhere.app}"
-          echo "::set-output name=version::${version_label:-1.0.0}"
-          echo "::set-output name=mode::${mode_label:-dev-ts}"
-          echo "::set-output name=os::${os:-macos-latest}"
+
+     - name: Extract Version Label
+       id: extract-version
+       run: |
+            for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
+              if [[ $label == v:* ]]; then
+                 version_label=$(echo "$label" | sed -n 's/v:\([^,]*\).*/\1/p')
+                 echo "Version: $version_label"
+                 echo "::set-output name=version::${version_label:-1.0.0}"
+                break
+              fi
+             done
 
 
      - name: Print all the params 
        run: |  
-            echo "Brand: ${{ steps.extract-labels.outputs.brand }}"
-            echo "Version: ${{ steps.extract-labels.outputs.version }}"
-            echo "Mode: ${{ steps.extract-labels.outputs.mode }}"
-            echo "Os: ${{ steps.extract-labels.outputs.os }}"
+            echo "Brand: ${{ steps.extract-brand.outputs.brand }}"
+            echo "Version: ${{ steps.extract-version.outputs.version }}"
+            echo "Mode: ${{ steps.extract-mode.outputs.mode }}"
 
 
      - name: Setup checkout@v2
