@@ -9,15 +9,15 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    
-    runs-on: macos-latest
+    if: os=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*os:\([^,]*\).*/\1/p')
+    runs-on: os
     
     steps: 
      - name: echo all lables
        run: |
         echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
 
-        
+
      - name: Extract Labels
        id: extract-labels
        run: |
@@ -28,6 +28,8 @@ jobs:
           echo "::set-output name=brand::${brand_label:-anywhere.app}"
           echo "::set-output name=version::${version_label:-1.0.0}"
           echo "::set-output name=mode::${mode_label:-dev-ts}"
+          echo "::set-output name=os::${os:-macos-latest}"
+
 
      - name: Store data
        run: | 
