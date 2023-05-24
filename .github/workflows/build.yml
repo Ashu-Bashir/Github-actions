@@ -17,9 +17,9 @@ jobs:
      - name: Extract Labels
        id: extract-labels
        run: |
-          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep -oP '(?<=brand:)[^,]*')
-          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep -oP '(?<=v:)[^,]*')
-          mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | grep -oP '(?<=mode:)[^,]*')
+          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
+          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
+          mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*mode:\([^,]*\).*/\1/p')
 
           echo "::set-output name=brand::${brand_label:-anywhere.app}"
           echo "::set-output name=version::${version_label:-1.0.0}"
