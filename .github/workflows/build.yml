@@ -19,19 +19,21 @@ jobs:
     steps: 
      - name: echo all lables
        run: |
-        echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
+         for label in "${{ github.event.pull_request.labels.*.name }}"; do
+           echo "Label: $label"
+         done
 
      - name: Extract Labels
        id: extract-labels
        run: |
-        #   brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
-        #   version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
+          brand_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*brand:\([^,]*\).*/\1/p')
+          version_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*v:\([^,]*\).*/\1/p')
           mode_label=$(echo "${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*mode:\([^,]*\).*/\1/p')
 
-        #   echo "::set-output name=brand::${brand_label:-anywhere.app}"
-        #   echo "::set-output name=version::${version_label:-1.0.0}"
+          echo "::set-output name=brand::${brand_label:-anywhere.app}"
+          echo "::set-output name=version::${version_label:-1.0.0}"
           echo "::set-output name=mode::${mode_label:-dev-ts}"
-        #   echo "::set-output name=os::${os:-macos-latest}"
+          echo "::set-output name=os::${os:-macos-latest}"
 
 
      - name: Print all the params
