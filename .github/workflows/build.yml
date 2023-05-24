@@ -14,22 +14,7 @@ jobs:
                
     steps: 
 
-     - name: Check Brand Label
-       id: check_brand_label 
-       run: |
-         if echo "${{ github.event.pull_request.labels.*.name }}" | grep -q "brand|v|mode"; then
-         echo "::set-output name=brand_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/brand/ {print $2}')"
-         echo "::set-output name=v_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/v/ {print $2}')"
-         echo "::set-output name=mode_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/mode/ {print $2}')"
-        
-         else
-            echo "::set-output name=brand_selected::false"
-            echo "::set-output name=default_value::anywhere.app"
-            echo "::set-output name=v_selected::false"
-            echo "::set-output name=default_value::1.0.0"
-            echo "::set-output name=brand_selected::false"
-            echo "::set-output name=mode_value::dev-ts"
-         fi 
+   
 
      - name: Setup checkout@v2
        uses: actions/checkout@v2
