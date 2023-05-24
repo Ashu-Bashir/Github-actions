@@ -36,10 +36,10 @@ jobs:
           done
 
 
-          echo "::set-output name=brand::${brand_label:-anywhere.app}"
-          echo "::set-output name=version::${v_label:-1.0.0}"
-          echo "::set-output name=mode::${mode_label:-dev-ts}"
-          echo "::set-output name=os::${os_label:-macos-latest}"
+          echo "::set-output name=brand::${brand_label}"
+          echo "::set-output name=version::${v_label}"
+          echo "::set-output name=mode::${mode_label}"
+          echo "::set-output name=os::${os_label}"
 
 
      - name: Print data
