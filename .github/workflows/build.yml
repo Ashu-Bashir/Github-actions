@@ -1,32 +1,35 @@
 name: ActionsTest
 
 on:
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: 'Mode for the build'
-        required: true
-        default: 'dev-ts'
-      version:
-        description: 'Version for the build'
-        required: true
-        default: '1.0.0'
-      brand:
-        description: 'Brand for the build'
-        required: true
-        default: 'anywhere.app'
-      OS: 
-        type: choice
-        description: 'OS for the build'
-        required: true
-        options: 
-            - macos-latest
-            - windows-latest
+  pull_request:
+        branches: 
+          - main
+        types: [opened, synchronize, reopened, labeled]
+  label:
+        types: [created, edited] 
 jobs:
  live:
-   runs-on: ${{ github.event.inputs.OS }}
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
+    runs-on: ${{ (github.event.pull_request.labels.*.name ) }}
                
-   steps: 
+    steps: 
+
+     - name: Check Brand Label
+       id: check_brand_label
+       run: |
+         if echo "${{ github.event.pull_request.labels.*.name }}" | grep -q "brand|v|mode"; then
+         echo "::set-output name=brand_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/brand/ {print $2}')"
+         echo "::set-output name=v_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/v/ {print $2}')"
+         echo "::set-output name=mode_value::$(echo ${{ github.event.pull_request.labels.*.name }} | awk -F ':' '/mode/ {print $2}')"
+        
+         else
+            echo "::set-output name=brand_selected::false"
+            echo "::set-output name=default_value::anywhere.app"
+            echo "::set-output name=v_selected::false"
+            echo "::set-output name=default_value::1.0.0"
+            echo "::set-output name=brand_selected::false"
+            echo "::set-output name=mode_value::dev-ts"
+         fi 
 
      - name: Setup checkout@v2
        uses: actions/checkout@v2
@@ -55,9 +58,9 @@ jobs:
      - name: Set up JavaScript
        id: setup-js
        run: 
-         echo "::set-output name=getDataForStoringInDatastore::$(node -e "console.log(JSON.stringify(require('../../../build-config/deployUtil.js').getDataForStoringInDatastore()))")"
+         echo "::set-output name=getData::\$(node -e \"console.log(JSON.stringify(require('../../../store/data.js').getData()))\")"
 
 
-     - name: Store data in the DataStore
+     - name: Store data
        run: |
-        echo "Mode: ${{ steps.setup-js.outputs.getDataForStoringInDatastore }}"
+        echo "Mode: ${{ steps.setup-js.outputs.getData }}"
