@@ -6,14 +6,18 @@ on:
           - main
         types: [opened, synchronize, reopened, labeled]
   label:
-        types: [created, edited] 
+        types: [created, edited]    
 jobs:
- live:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
-    runs-on: ${{ (github.event.pull_request.labels.*.name ) }}
-         
+ init:
+    
+    runs-on: macos-latest
+    
     steps: 
+     - name: echo all lables
+       run: |
+        echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
 
+        
      - name: Extract Labels
        id: extract-labels
        run: |
