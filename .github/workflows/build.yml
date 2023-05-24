@@ -37,10 +37,10 @@ jobs:
               if [[ $label == mode:* ]]; then
                  mode_label=$(echo "$label" | sed -n 's/mode:\([^,]*\).*/\1/p')
                  echo "Mode : $mode_label"
-                 echo "::set-output name=mode::${mode_label:-dev-ts}"
                  break
               fi
             done
+            echo "::set-output name=mode::${mode_label:-dev-ts}"
 
      - name: Extract Version Label
        id: extract-version
