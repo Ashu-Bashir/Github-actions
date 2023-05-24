@@ -9,21 +9,17 @@ on:
         types: [created, edited]    
 jobs:
  init:
+    if: |
+                contains(join(' ', github.event.pull_request.labels.*.name), 'os:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'mode:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'brand:') &&
+                contains(join(' ', github.event.pull_request.labels.*.name), 'v:')
     runs-on: macos-latest
     
     steps: 
      - name: echo all lables
        run: |
         echo "Lables: ${{ github.event.pull_request.labels.*.name }}"
-
-      
-     - name: Check Labels
-       if: |
-                contains(join(' ', github.event.pull_request.labels.*.name), 'os:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'mode:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'brand:') &&
-                contains(join(' ', github.event.pull_request.labels.*.name), 'v:')
-       run: echo "All labels are selected."
 
      - name: Extract Labels
        id: extract-labels
