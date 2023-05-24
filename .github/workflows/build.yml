@@ -9,7 +9,7 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    runs-on: ${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*os:\([^,]*\).*/\1/p')
+    runs-on: macos-latest
     
     steps: 
      - name: echo all lables
