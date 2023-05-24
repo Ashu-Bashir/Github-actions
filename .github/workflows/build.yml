@@ -23,14 +23,7 @@ jobs:
        uses: actions/setup-node@v1 
        with:
          node-version: 16.x
-              
-     - name: Enter Input Values.
-       run: |
-            echo "Mode: ${{ github.event.inputs.mode }}"
-            echo "Version: ${{ github.event.inputs.version }}"
-            echo "Brand: ${{ github.event.inputs.brand }}"
-            echo "OS: ${{ github.event.inputs.OS }}"
-              
+                           
      - name: Cache node_modules  
        uses: actions/cache@v2
        with:
