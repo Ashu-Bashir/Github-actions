@@ -9,12 +9,6 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    if: |
-      contains(github.event.pull_request.labels.*.name, 'os')  &&
-      contains(github.event.pull_request.labels.*.name, 'brand') &&
-      contains(github.event.pull_request.labels.*.name, 'v') &&
-      contains(github.event.pull_request.labels.*.name, 'mode') 
-
     runs-on: ${{ github.event.pull_request.labels.*.name }}" | sed -n 's/.*os:\([^,]*\).*/\1/p')
     
     steps: 
