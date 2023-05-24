@@ -9,9 +9,8 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'os:macos-latest')  }} 
     runs-on: macos-latest  
-    
+
     steps: 
      - name: echo all lables
        run: |
@@ -29,7 +28,7 @@ jobs:
                echo "::set-output name=brand::${brand_label:-anywhere.app}"
                break
              fi
-           done
+           done 
 
      - name: Extract Mode Label
        id: extract-mode
@@ -43,7 +42,6 @@ jobs:
               fi
             done
 
-
      - name: Extract Version Label
        id: extract-version
        run: |
@@ -55,6 +53,7 @@ jobs:
                 break
               fi
              done
+
      - name: Extract Os Label
        id: extract-os
        run: |
