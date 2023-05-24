@@ -25,11 +25,11 @@ jobs:
              if [[ $label == brand:* ]]; then
                brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
                echo "Brand : $brand_label"
-               echo "::set-output name=brand::${brand_label:-anywhere.app}"
                break
              fi
            done 
-
+           echo "::set-output name=brand::${brand_label:-anywhere.app}"
+           
      - name: Extract Mode Label
        id: extract-mode
        run: |
@@ -49,10 +49,11 @@ jobs:
               if [[ $label == v:* ]]; then
                  version_label=$(echo "$label" | sed -n 's/v:\([^,]*\).*/\1/p')
                  echo "Version: $version_label"
-                 echo "::set-output name=version::${version_label:-1.0.0}"
                 break
               fi
              done
+             echo "::set-output name=version::${version_label:-1.0.0}"
+
 
      - name: Extract Os Label
        id: extract-os
@@ -61,10 +62,12 @@ jobs:
                 if [[ $label == os:* ]]; then
                     os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
                     echo "os : $os_label"
-                    echo "::set-output name=os::${os_label}"
                     break
                 fi
              done
+             echo "::set-output name=os::${os_label}"
+
+             
      - name: Print all the params 
        run: |  
             echo "Brand: ${{ steps.extract-brand.outputs.brand }}"
