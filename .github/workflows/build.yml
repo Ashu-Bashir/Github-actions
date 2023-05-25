@@ -13,6 +13,7 @@ jobs:
         for label in ${{ join(github.event.pull_request.labels.*.name, '')}}; do
             if [[ $label == os:* ]]; then
             os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
+            echo "OS : $os_label"
             fi
         done
 
