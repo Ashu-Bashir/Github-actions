@@ -9,10 +9,9 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    runs-on: ${{matrix.os}}
-    strategy:
-        matrix:
-            os: [ macos-latest , windows-latest ]
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
+    runs-on: ${{ (github.event.pull_request.labels.*.name ) }}
+    # runs-on: macos-latest
     steps: 
      - name: echo all lables
        run: |
