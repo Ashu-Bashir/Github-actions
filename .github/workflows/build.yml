@@ -9,8 +9,14 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'macos-latest') || contains(github.event.pull_request.labels.*.name, 'windows-latest') }}
-    runs-on: ${{ (github.event.pull_request.labels.*.name ) }}
+    if: |
+        for label in ${{ join(github.event.pull_request.labels.*.name, '')}}; do
+            if [[ $label == os:* ]]; then
+            os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
+            fi
+        done
+
+    runs-on: os_label
     # runs-on: macos-latest
     steps: 
      - name: echo all lables
@@ -23,19 +29,19 @@ jobs:
        id: extract-labels
        run: |
             for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
-            if [[ $label == brand:* ]]; then
-                brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
-                echo "Brand : $brand_label"
-            elif [[ $label == mode:* ]]; then
-                mode_label=$(echo "$label" | sed -n 's/mode:\([^,]*\).*/\1/p')
-                echo "Mode : $mode_label"
-            elif [[ $label == v:* ]]; then
-                version_label=$(echo "$label" | sed -n 's/v:\([^,]*\).*/\1/p')
-                echo "Version: $version_label"
-            elif [[ $label == os:* ]]; then
-                os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
-                echo "OS : $os_label"
-            fi
+                if [[ $label == brand:* ]]; then
+                    brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
+                    echo "Brand : $brand_label"
+                elif [[ $label == mode:* ]]; then
+                    mode_label=$(echo "$label" | sed -n 's/mode:\([^,]*\).*/\1/p')
+                    echo "Mode : $mode_label"
+                elif [[ $label == v:* ]]; then
+                    version_label=$(echo "$label" | sed -n 's/v:\([^,]*\).*/\1/p')
+                    echo "Version: $version_label"
+                elif [[ $label == os:* ]]; then
+                    os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
+                    echo "OS : $os_label"
+                fi
             done
             
             echo "::set-output name=brand::${brand_label:-anywhere.app}"
