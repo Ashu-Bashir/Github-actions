@@ -9,8 +9,10 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    runs-on: macos-latest  
-
+    runs-on: ${{matrix.os}}
+    strategy:
+        matrix:
+            os: [ macos-latest , windows-latest ]
     steps: 
      - name: echo all lables
        run: |
@@ -49,8 +51,6 @@ jobs:
             echo "Version: ${{ steps.extract-labels.outputs.version }}"
             echo "Mode: ${{ steps.extract-labels.outputs.mode }}"
             echo "Os: ${{ steps.extract-labels.outputs.os }}"
-
-
 
      - name: Setup checkout@v2
        uses: actions/checkout@v2
