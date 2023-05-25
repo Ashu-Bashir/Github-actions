@@ -1,32 +1,53 @@
 name: ActionsTest
 
 on:
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: 'Mode for the build'
-        required: true
-        default: 'dev-ts'
-      version:
-        description: 'Version for the build'
-        required: true
-        default: '1.0.0'
-      brand:
-        description: 'Brand for the build'
-        required: true
-        default: 'anywhere.app'
-      OS: 
-        type: choice
-        description: 'OS for the build'
-        required: true
-        options: 
-            - macos-latest
-            - windows-latest
+  pull_request:
+        branches: 
+          - main
+        types: [opened, synchronize, reopened, labeled]
+  label:
+        types: [created, edited]    
 jobs:
- live:
-   runs-on: ${{ github.event.inputs.OS }}
-               
-   steps: 
+ init:
+    runs-on: macos-latest
+    steps:  
+     - name: echo all lables
+       run: |
+         for label in ${{ join(github.event.pull_request.labels.*.name, ' ') }}; do
+          echo "Label: $label"
+         done
+
+     - name: Extract Labels
+       id: extract-labels
+       run: |
+            for label in ${{ join(github.event.pull_request.labels.*.name, ' ')}}; do
+                if [[ $label == brand:* ]]; then
+                    brand_label=$(echo "$label" | sed -n 's/brand:\([^,]*\).*/\1/p')
+                    echo "Brand : $brand_label"
+                elif [[ $label == mode:* ]]; then
+                    mode_label=$(echo "$label" | sed -n 's/mode:\([^,]*\).*/\1/p')
+                    echo "Mode : $mode_label"
+                elif [[ $label == v:* ]]; then
+                    version_label=$(echo "$label" | sed -n 's/v:\([^,]*\).*/\1/p')
+                    echo "Version: $version_label"
+                elif [[ $label == os:* ]]; then
+                    os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
+                    echo "OS : $os_label"
+                fi
+            done
+            
+            echo "::set-output name=brand::${brand_label:-anywhere.app}"
+            echo "::set-output name=mode::${mode_label:-dev-ts}"
+            echo "::set-output name=version::${version_label:-1.0.0}"
+            echo "::set-output name=os::${os_label}"
+
+
+     - name: Print all the params 
+       run: |  
+            echo "Brand: ${{ steps.extract-labels.outputs.brand }}"
+            echo "Version: ${{ steps.extract-labels.outputs.version }}"
+            echo "Mode: ${{ steps.extract-labels.outputs.mode }}"
+            echo "Os: ${{ steps.extract-labels.outputs.os }}"
 
      - name: Setup checkout@v2
        uses: actions/checkout@v2
@@ -35,14 +56,7 @@ jobs:
        uses: actions/setup-node@v1 
        with:
          node-version: 16.x
-              
-     - name: Enter Input Values.
-       run: |
-            echo "Mode: ${{ github.event.inputs.mode }}"
-            echo "Version: ${{ github.event.inputs.version }}"
-            echo "Brand: ${{ github.event.inputs.brand }}"
-            echo "OS: ${{ github.event.inputs.OS }}"
-              
+                           
      - name: Cache node_modules  
        uses: actions/cache@v2
        with:
@@ -55,9 +69,9 @@ jobs:
      - name: Set up JavaScript
        id: setup-js
        run: 
-         echo "::set-output name=getDataForStoringInDatastore::$(node -e "console.log(JSON.stringify(require('../../../build-config/deployUtil.js').getDataForStoringInDatastore()))")"
+         echo "::set-output name=getData::\$(node -e \"console.log(JSON.stringify(require('../../../store/data.js').getData()))\")"
 
 
-     - name: Store data in the DataStore
-       run: |
-        echo "Mode: ${{ steps.setup-js.outputs.getDataForStoringInDatastore }}"
+     - name: Store data
+       run: | 
+        echo "Mode: ${{ steps.setup-js.outputs.getData }}"
