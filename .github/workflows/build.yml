@@ -9,17 +9,8 @@ on:
         types: [created, edited]    
 jobs:
  init:
-    if: |
-        for label in ${{ join(github.event.pull_request.labels.*.name, '')}}; do
-            if [[ $label == os:* ]]; then
-            os_label=$(echo "$label" | sed -n 's/os:\([^,]*\).*/\1/p')
-            echo "OS : $os_label"
-            fi
-        done
-
-    runs-on: os_label
-    # runs-on: macos-latest
-    steps: 
+    runs-on: macos-latest
+    steps:  
      - name: echo all lables
        run: |
          for label in ${{ join(github.event.pull_request.labels.*.name, ' ') }}; do
